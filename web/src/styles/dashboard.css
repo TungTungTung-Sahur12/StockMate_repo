@@ -1,0 +1,293 @@
+:root {
+  --store-red: #c0392b;
+  --store-red-dark: #a53125;
+  --store-yellow: #f4b400;
+  --store-wood: #6b4226;
+  --store-cream: #fdf6ec;
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.store-page {
+  min-height: 100vh;
+  width: 100%;
+  background:
+    radial-gradient(circle at 15% 10%, #fff4de 0%, transparent 40%),
+    radial-gradient(circle at 85% 90%, #ffe9c7 0%, transparent 45%),
+    #fdf6ec;
+  padding: 24px;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.store-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #d84a3a, #c0392b);
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 0 var(--store-red-dark), 0 10px 20px rgba(107, 66, 38, 0.15);
+}
+
+.store-header h1 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.welcome-text {
+  font-size: 14px;
+}
+
+/* Store signage banner */
+.signage {
+  background: repeating-linear-gradient(45deg, #6b4226, #6b4226 12px, #5a361f 12px, #5a361f 24px);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(107, 66, 38, 0.25);
+}
+
+.signage-inner {
+  background: var(--store-yellow);
+  border: 3px dashed #a5750a;
+  border-radius: 8px;
+  padding: 18px 20px;
+  text-align: center;
+  animation: popIn 0.4s ease-out;
+}
+
+.signage-title {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  color: #6b4226;
+  font-family: "Segoe UI", Arial, sans-serif;
+  letter-spacing: 1px;
+}
+
+.signage-sub {
+  display: block;
+  font-size: 13px;
+  color: #7a5a20;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+/* Floating stat cards */
+.stat-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 180px;
+  background: #fff;
+  border: 2px solid #f0e2c8;
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 6px 0 #f0e2c8, 0 10px 20px rgba(107, 66, 38, 0.08);
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+.stat-icon {
+  font-size: 28px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--store-wood);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #8a7259;
+  font-weight: 600;
+}
+
+.float-1 { animation: fadeInUp 0.4s ease-out both, floatY 4s ease-in-out infinite; animation-delay: 0s, 0.4s; }
+.float-2 { animation: fadeInUp 0.4s ease-out both, floatY 4.5s ease-in-out infinite; animation-delay: 0.1s, 0.5s; }
+.float-3 { animation: fadeInUp 0.4s ease-out both, floatY 5s ease-in-out infinite; animation-delay: 0.2s, 0.6s; }
+
+/* Cards */
+.store-card {
+  background: #fff;
+  border: 2px solid #f0e2c8;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 0 #f0e2c8, 0 8px 18px rgba(107, 66, 38, 0.08);
+  animation: fadeInUp 0.45s ease-out both;
+}
+
+.store-card h2 {
+  margin-top: 0;
+  color: var(--store-wood);
+  font-size: 18px;
+}
+
+.store-card .subtitle {
+  color: #8a7259;
+  font-size: 13px;
+  margin-top: -6px;
+  margin-bottom: 16px;
+}
+
+/* Product shelf grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 14px;
+}
+
+.product-tile {
+  background: linear-gradient(180deg, #fffdf9, #fff4de);
+  border: 2px solid #f0e2c8;
+  border-radius: 10px;
+  padding: 16px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: popIn 0.35s ease-out both;
+}
+
+.product-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(107, 66, 38, 0.15);
+  border-color: var(--store-yellow);
+}
+
+.product-emoji {
+  font-size: 30px;
+}
+
+.product-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--store-wood);
+}
+
+/* Admin call-to-action card */
+.admin-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #fff8ec, #fdf0d5);
+  border-color: var(--store-yellow);
+}
+
+.admin-card-text h2 { margin-bottom: 4px; }
+.admin-card-text .subtitle { margin-bottom: 0; }
+
+.staff-card {
+  background: linear-gradient(135deg, #fdf6ec, #f7ead3);
+}
+
+/* Buttons */
+.btn-store {
+  background: linear-gradient(135deg, var(--store-yellow), #e0a400);
+  color: var(--store-wood);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 3px 0 #a5750a;
+  transition: transform 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+
+.btn-store:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 #a5750a;
+}
+
+.btn-store:disabled { background: #d8cba0; cursor: not-allowed; box-shadow: none; }
+
+.btn-small {
+  background: var(--store-wood);
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-small:hover { background: #543319; }
+
+/* Table (Manage Users) */
+.store-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.store-table th {
+  background: #fbeacb;
+  color: var(--store-wood);
+  text-align: left;
+  padding: 10px;
+  border-radius: 6px 6px 0 0;
+}
+
+.store-table td {
+  padding: 10px;
+  border-bottom: 1px solid #f0e2c8;
+}
+
+.store-table tr:hover td {
+  background: #fffaf0;
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badge-admin { background: #c0392b22; color: var(--store-red); }
+.badge-staff { background: #f4b40033; color: #8a6400; }
+.badge-active { background: #2e7d3222; color: #2e7d32; }
+.badge-inactive { background: #99999933; color: #666; }
+
+.staff-form { max-width: 340px; }
