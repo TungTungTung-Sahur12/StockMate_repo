@@ -240,7 +240,7 @@ export default function Inventory() {
                     )}
                   </div>
                   <p className="inventory-meta">Category: {CATEGORY_LABELS[product.category] || product.category}</p>
-                  <p className="inventory-meta">Price: ${Number(product.price).toFixed(2)}</p>
+                  <p className="inventory-meta">Price: ₱{Number(product.price).toFixed(2)}</p>
                   <p className="inventory-meta">Quantity: {product.quantity}</p>
                   {product.isLowStock && <span className="badge badge-inactive">Low Stock</span>}
                 </div>

@@ -26,7 +26,7 @@ class LoginActivity : AppCompatActivity() {
         val emailInput = findViewById<TextInputEditText>(R.id.emailInput)
         val passwordInput = findViewById<TextInputEditText>(R.id.passwordInput)
         val loginButton = findViewById<MaterialButton>(R.id.loginButton)
-        val registerLink = findViewById<MaterialButton>(R.id.registerLink)
+
 
         emailInput.doOnTextChanged { text, _, _, _ ->
             emailLayout.error = null
@@ -47,9 +47,7 @@ class LoginActivity : AppCompatActivity() {
             authViewModel.login(LoginRequest(email, password))
         }
 
-        registerLink.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
-        }
+
 
         authViewModel.uiState.observe(this) { state ->
             when (state) {
