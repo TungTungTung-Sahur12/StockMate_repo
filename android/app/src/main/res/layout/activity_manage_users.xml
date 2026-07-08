@@ -4,34 +4,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#fdf6ec"
-    android:padding="20dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Manage Staff Accounts"
-        android:textColor="#6b4226"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Admin may create staff accounts and update staff status."
-        android:textColor="#8a7259"
-        android:textSize="13sp"
-        android:layout_marginBottom="16dp" />
+    android:background="@color/ascendia_cream"
+    android:padding="24dp">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
-        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="@color/ascendia_black"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="6dp"
+        app:strokeColor="@color/ascendia_border"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="18dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ASCENDIA"
+                android:textColor="@color/ascendia_white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/backToDashboard"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="← Back"
+                android:textColor="@color/ascendia_white" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:cardBackgroundColor="@color/ascendia_white"
+        app:cardCornerRadius="4dp"
         app:cardElevation="4dp"
-        app:strokeColor="#f0e2c8"
-        app:strokeWidth="2dp">
+        app:strokeColor="@color/ascendia_border"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,9 +62,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add Staff Account"
-                android:textColor="#6b4226"
+                android:textColor="@color/ascendia_black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Only the ASCENDIA owner (Admin) can create staff access."
+                android:textColor="@color/ascendia_muted"
+                android:textSize="13sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/nameLayout"
@@ -54,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:hint="Full Name"
-                app:boxBackgroundColor="#fffdf9">
+                app:boxBackgroundColor="@color/ascendia_cream">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/nameInput"
@@ -70,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:hint="Email"
-                app:boxBackgroundColor="#fffdf9">
+                app:boxBackgroundColor="@color/ascendia_cream">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/emailInput"
@@ -86,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:hint="Temporary Password"
-                app:boxBackgroundColor="#fffdf9"
+                app:boxBackgroundColor="@color/ascendia_cream"
                 app:endIconMode="password_toggle">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -101,18 +128,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:backgroundTint="#c0392b"
+                android:backgroundTint="@color/ascendia_accent"
                 android:text="Add Staff"
-                app:cornerRadius="8dp" />
+                android:textColor="@color/ascendia_white"
+                app:cornerRadius="4dp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/userRecyclerView"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:overScrollMode="always"
-        android:scrollbars="vertical" />
+        android:layout_marginTop="20dp"
+        app:cardBackgroundColor="@color/ascendia_white"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="4dp"
+        app:strokeColor="@color/ascendia_border"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ASCENDIA Team Accounts"
+                android:textColor="@color/ascendia_black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/userRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

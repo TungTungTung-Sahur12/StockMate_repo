@@ -6,7 +6,7 @@
         <item name="colorOnPrimaryContainer">@color/ascendia_white</item>
         <item name="colorSecondary">@color/ascendia_cream</item>
         <item name="colorOnSecondary">@color/ascendia_black</item>
-        <item name="colorBackground">@color/ascendia_black</item>
+        <item name="android:colorBackground">@color/ascendia_black</item>
         <item name="colorOnBackground">@color/ascendia_white</item>
         <item name="colorSurface">@color/ascendia_white</item>
         <item name="colorOnSurface">@color/ascendia_black</item>

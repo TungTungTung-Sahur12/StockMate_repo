@@ -3,16 +3,15 @@ import { useNavigate, Link } from "react-router-dom";
 import "../styles/dashboard.css";
 
 const PRODUCTS = [
-  { name: "Signature Jackets" },
-  { name: "Tailored Trousers" },
-  { name: "Layered Scarves" },
-  { name: "Street Sneakers" },
-  { name: "Structured Bags" },
-  { name: "Caps" },
-  { name: "Formal Shirts" },
-  { name: "Premium Fabrics" },
-  { name: "Limited Drops" },
-  { name: "Bundle Sets" },
+  { name: "Tee" },
+  { name: "Box Fit Tee" },
+  { name: "Hoodie" },
+  { name: "Pants" },
+  { name: "Cap" },
+  { name: "Polo" },
+  { name: "Shorts" },
+  { name: "Longsleeves" },
+  { name: "Accessories" },
 ];
 
 export default function Dashboard() {

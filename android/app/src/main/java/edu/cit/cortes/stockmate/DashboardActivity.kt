@@ -6,9 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
-
-import edu.cit.cortes.stockmate.SessionManager
 
 class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,21 +21,23 @@ class DashboardActivity : AppCompatActivity() {
         val productRecyclerView = findViewById<RecyclerView>(R.id.productRecyclerView)
         val staffSectionTitle = findViewById<MaterialTextView>(R.id.staffSectionTitle)
         val staffSectionDescription = findViewById<MaterialTextView>(R.id.staffSectionDescription)
+        val staffCard = findViewById<MaterialCardView>(R.id.staffCard)
+        val manageButton = findViewById<MaterialButton>(R.id.manageUsersButton)
 
         val products = listOf(
-            ProductItem("🧴", "Shampoo Sachets"),
-            ProductItem("🥫", "Canned Goods"),
-            ProductItem("🍬", "Candies"),
-            ProductItem("🧃", "Softdrinks"),
-            ProductItem("🍚", "Rice (Bigas)"),
-            ProductItem("🧼", "Soap"),
-            ProductItem("🥤", "Instant Coffee"),
-            ProductItem("🍜", "Instant Noodles"),
-            ProductItem("📶", "E-load"),
-            ProductItem("🥖", "Bread (Pandesal)")
+            ProductItem("Signature Jackets"),
+            ProductItem("Tailored Trousers"),
+            ProductItem("Layered Scarves"),
+            ProductItem("Street Sneakers"),
+            ProductItem("Structured Bags"),
+            ProductItem("Caps"),
+            ProductItem("Formal Shirts"),
+            ProductItem("Premium Fabrics"),
+            ProductItem("Limited Drops"),
+            ProductItem("Bundle Sets")
         )
 
-        productRecyclerView.layoutManager = GridLayoutManager(this, 3)
+        productRecyclerView.layoutManager = GridLayoutManager(this, 2)
         productRecyclerView.adapter = ProductAdapter(products)
 
         val sessionRole = SessionManager.getInstance(this).getUserRole()
@@ -44,21 +45,28 @@ class DashboardActivity : AppCompatActivity() {
         val role = intent.getStringExtra("role") ?: sessionRole ?: "ADMIN"
         val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
         val greeting = when {
-            hour < 12 -> "Magandang umaga"
-            hour < 18 -> "Magandang hapon"
-            else -> "Magandang gabi"
+            hour < 12 -> "Good morning"
+            hour < 18 -> "Good afternoon"
+            else -> "Good evening"
         }
 
-        title.text = "🏪 StockMate"
+        title.text = "ASCENDIA"
         subtitle.text = "$greeting, $name!"
         roleBadge.text = role.uppercase()
 
         if (role.equals("ADMIN", ignoreCase = true)) {
-            staffSectionTitle.text = "🙋 Admin Access"
-            staffSectionDescription.text = "You are logged in as Admin. Use Manage User Accounts to create and manage staff members."
+            staffSectionTitle.text = "ASCENDIA Team Accounts"
+            staffSectionDescription.text = "Add staff accounts and manage who can access ASCENDIA."
+            manageButton.visibility = MaterialButton.VISIBLE
+            manageButton.setOnClickListener {
+                startActivity(Intent(this, ManageUsersActivity::class.java))
+            }
+            staffCard.visibility = MaterialCardView.GONE
         } else {
-            staffSectionTitle.text = "🙋 Staff Access"
+            staffSectionTitle.text = "Staff Access"
             staffSectionDescription.text = "You're logged in as Staff. Inventory and sales tools will appear here once enabled by your Admin."
+            manageButton.visibility = MaterialButton.GONE
+            staffCard.visibility = MaterialCardView.VISIBLE
         }
 
         logoutButton.setOnClickListener {
@@ -67,16 +75,6 @@ class DashboardActivity : AppCompatActivity() {
             }
             startActivity(intent)
             finish()
-        }
-
-        val manageButton = findViewById<MaterialButton>(R.id.manageUsersButton)
-        if (role == "ADMIN") {
-            manageButton.setOnClickListener {
-                startActivity(Intent(this, ManageUsersActivity::class.java))
-            }
-            manageButton.visibility = MaterialButton.VISIBLE
-        } else {
-            manageButton.visibility = MaterialButton.GONE
         }
     }
 }

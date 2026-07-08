@@ -30,6 +30,7 @@ class ManageUsersActivity : AppCompatActivity() {
         val emailInput = findViewById<TextInputEditText>(R.id.emailInput)
         val passwordInput = findViewById<TextInputEditText>(R.id.passwordInput)
         val createButton = findViewById<MaterialButton>(R.id.createButton)
+        val backToDashboard = findViewById<MaterialButton>(R.id.backToDashboard)
         val recyclerView = findViewById<RecyclerView>(R.id.userRecyclerView)
 
         userAdapter = UserAdapter { user ->
@@ -44,29 +45,10 @@ class ManageUsersActivity : AppCompatActivity() {
             val email = emailInput.text.toString().trim()
             val password = passwordInput.text.toString().trim()
 
-            var valid = true
-            if (name.isBlank()) {
-                nameLayout.error = "Name is required"
-                valid = false
-            } else {
-                nameLayout.error = null
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-
-            if (email.isBlank()) {
-                emailLayout.error = "Email is required"
-                valid = false
-            } else {
-                emailLayout.error = null
-            }
-
-            if (password.length < 8) {
-                passwordLayout.error = "Password must be at least 8 characters"
-                valid = false
-            } else {
-                passwordLayout.error = null
-            }
-
-            if (!valid) return@setOnClickListener
 
             adminViewModel.createStaff(CreateStaffRequest(name, email, password))
         }
@@ -99,6 +81,9 @@ class ManageUsersActivity : AppCompatActivity() {
             }
         }
 
+        backToDashboard.setOnClickListener {
+            finish()
+        }
         adminViewModel.loadUsers()
     }
 }

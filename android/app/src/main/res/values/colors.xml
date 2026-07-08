@@ -6,6 +6,8 @@
     <color name="ascendia_accent">#B5191E</color>
     <color name="ascendia_surface">#FFFFFF</color>
     <color name="ascendia_background">#F5F5F0</color>
+    <color name="ascendia_border">#111111</color>
+    <color name="ascendia_muted">#4B4B4B</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

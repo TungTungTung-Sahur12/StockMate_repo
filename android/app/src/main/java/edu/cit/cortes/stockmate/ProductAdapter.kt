@@ -20,14 +20,12 @@ class ProductAdapter(private val products: List<ProductItem>) : RecyclerView.Ada
     override fun getItemCount(): Int = products.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val emojiText = itemView.findViewById<TextView>(R.id.productEmoji)
         private val nameText = itemView.findViewById<TextView>(R.id.productName)
 
         fun bind(item: ProductItem) {
-            emojiText.text = item.emoji
             nameText.text = item.name
         }
     }
 }
 
-data class ProductItem(val emoji: String, val name: String)
+data class ProductItem(val name: String)
