@@ -65,9 +65,12 @@ export default function Dashboard() {
       </div>
 
       <div className="store-card shelf-card">
-        <h2>Featured Pieces</h2>
+        <div className="inventory-toolbar">
+          <h2>Featured Pieces</h2>
+          <Link to="/inventory" className="btn-store">Open Inventory →</Link>
+        </div>
         <p className="subtitle">
-          Inventory tools will appear here as your ASCENDIA catalog grows.
+          Inventory summary prompt: "Track stock levels, surface low-stock essentials, and keep the ASCENDIA catalog ready for the next drop."
         </p>
         <div className="product-grid">
           {PRODUCTS.map((p, i) => (
@@ -81,11 +84,11 @@ export default function Dashboard() {
       {isAdmin && (
         <div className="store-card admin-card">
           <div className="admin-card-text">
-            <h2>ASCENDIA Team Accounts</h2>
-            <p className="subtitle">Add staff accounts and manage who can access ASCENDIA.</p>
+            <h2>Staff Management</h2>
+            <p className="subtitle">Manage staff access and keep the ASCENDIA team aligned.</p>
           </div>
           <Link to="/manage-users" className="btn-store">
-            Manage Team Accounts →
+            Manage Staff Accounts →
           </Link>
         </div>
       )}

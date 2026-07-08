@@ -70,9 +70,7 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="auth-footer">
-          First time? <Link to="/register">Create the Admin account</Link>
-        </div>
+       
       </div>
     </div>
   );
