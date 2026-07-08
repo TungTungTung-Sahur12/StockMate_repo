@@ -64,15 +64,15 @@ export default function ManageUsers() {
   return (
     <div className="store-page">
       <div className="store-header">
-        <h1>🏪 StockMate</h1>
+        <h1>ASCENDIA</h1>
         <Link to="/dashboard" className="btn-small" style={{ textDecoration: "none" }}>
           ← Back to Dashboard
         </Link>
       </div>
 
       <div className="store-card">
-        <h2>🧾 Add Staff Account</h2>
-        <p className="subtitle">Only the Store Owner (Admin) can create Staff accounts.</p>
+        <h2>Add Staff Account</h2>
+        <p className="subtitle">Only the ASCENDIA owner (Admin) can create staff access.</p>
 
         {apiError && <div className="alert-error">{apiError}</div>}
         {successMsg && <div className="alert-success">{successMsg}</div>}
@@ -100,7 +100,7 @@ export default function ManageUsers() {
       </div>
 
       <div className="store-card">
-        <h2>👥 Store Accounts</h2>
+        <h2>ASCENDIA Team Accounts</h2>
         <table className="store-table">
           <thead>
             <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr>

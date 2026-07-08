@@ -46,8 +46,8 @@ export default function Login() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <h1>StockMate Login</h1>
-        <p className="subtitle">Sign in to manage your store inventory.</p>
+        <h1>ASCENDIA Access</h1>
+        <p className="subtitle">Sign in to manage the ASCENDIA inventory and team.</p>
 
         {successMessage && <div className="alert-success">{successMessage}</div>}
         {apiError && <div className="alert-error">{apiError}</div>}

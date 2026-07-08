@@ -1,7 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.StockMate" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/ascendia_black</item>
+        <item name="colorOnPrimary">@color/ascendia_white</item>
+        <item name="colorPrimaryContainer">@color/ascendia_accent</item>
+        <item name="colorOnPrimaryContainer">@color/ascendia_white</item>
+        <item name="colorSecondary">@color/ascendia_cream</item>
+        <item name="colorOnSecondary">@color/ascendia_black</item>
+        <item name="colorBackground">@color/ascendia_black</item>
+        <item name="colorOnBackground">@color/ascendia_white</item>
+        <item name="colorSurface">@color/ascendia_white</item>
+        <item name="colorOnSurface">@color/ascendia_black</item>
+        <item name="android:statusBarColor">@color/ascendia_black</item>
+        <item name="android:navigationBarColor">@color/ascendia_black</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Ascendia.SharpCorners</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Ascendia.SharpCorners</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Ascendia.SharpCorners</item>
+    </style>
+
+    <style name="Theme.StockMate" parent="Base.Theme.StockMate" />
+
+    <style name="ShapeAppearance.Ascendia.SharpCorners" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">0dp</item>
     </style>
 </resources>

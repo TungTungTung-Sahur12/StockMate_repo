@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fdf6ec"
+    android:background="@color/ascendia_cream"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,14 +16,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardCornerRadius="14dp"
+            app:cardCornerRadius="0dp"
             app:cardElevation="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="#f0e2c8"
-            app:strokeWidth="2dp">
+            app:strokeColor="@color/ascendia_border"
+            app:strokeWidth="1dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -34,8 +34,8 @@
                     android:id="@+id/titleText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Create Admin Account"
-                    android:textColor="#6b4226"
+                    android:text="Create ASCENDIA Admin"
+                    android:textColor="@color/ascendia_black"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -47,8 +47,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="One-time setup for your StockMate store."
-                    android:textColor="#8a7259"
+                    android:text="One-time setup for ASCENDIA administration."
+                    android:textColor="@color/ascendia_muted"
                     android:textSize="13sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:hint="Full name"
-                    app:boxBackgroundColor="#fffdf9"
+                    app:boxBackgroundColor="@color/ascendia_cream"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/subtitleText">
@@ -80,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:hint="Email"
-                    app:boxBackgroundColor="#fffdf9"
+                    app:boxBackgroundColor="@color/ascendia_cream"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/nameLayout">
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:hint="Password"
-                    app:boxBackgroundColor="#fffdf9"
+                    app:boxBackgroundColor="@color/ascendia_cream"
                     app:endIconMode="password_toggle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:hint="Confirm password"
-                    app:boxBackgroundColor="#fffdf9"
+                    app:boxBackgroundColor="@color/ascendia_cream"
                     app:endIconMode="password_toggle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -137,10 +137,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:backgroundTint="#c0392b"
+                    android:backgroundTint="@color/ascendia_accent"
                     android:paddingVertical="12dp"
                     android:text="Create Admin Account"
-                    app:cornerRadius="8dp"
+                    android:textColor="@color/ascendia_white"
+                    app:cornerRadius="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/confirmPasswordLayout" />
@@ -152,7 +153,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Already have an account? Sign in"
-                    android:textColor="#c0392b"
+                    android:textColor="@color/ascendia_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/registerButton" />

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fdf6ec"
+    android:background="@color/ascendia_cream"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,14 +16,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:cardCornerRadius="14dp"
+            app:cardCornerRadius="0dp"
             app:cardElevation="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="#f0e2c8"
-            app:strokeWidth="2dp">
+            app:strokeColor="@color/ascendia_border"
+            app:strokeWidth="1dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -34,8 +34,8 @@
                     android:id="@+id/titleText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="StockMate Login"
-                    android:textColor="#6b4226"
+                    android:text="ASCENDIA Access"
+                    android:textColor="@color/ascendia_black"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -47,8 +47,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="Sign in to manage your store inventory."
-                    android:textColor="#8a7259"
+                    android:text="Sign in to manage ASCENDIA inventory and team."
+                    android:textColor="@color/ascendia_black"
                     android:textSize="13sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -98,10 +98,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:backgroundTint="#c0392b"
+                    android:backgroundTint="@color/ascendia_accent"
                     android:paddingVertical="12dp"
                     android:text="Sign In"
-                    app:cornerRadius="8dp"
+                    app:cornerRadius="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/passwordLayout" />
@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Create the Admin account"
-                    android:textColor="#c0392b"
+                    android:textColor="@color/ascendia_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/loginButton" />

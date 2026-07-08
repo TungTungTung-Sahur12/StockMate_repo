@@ -44,9 +44,9 @@ export default function Register() {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <h1>Create Admin Account</h1>
+        <h1>Create ASCENDIA Admin</h1>
         <p className="subtitle">
-          One-time setup — this is only available before the first Admin account exists.
+          One-time setup — this is only available before the first ASCENDIA admin exists.
         </p>
 
         {apiError && <div className="alert-error">{apiError}</div>}
