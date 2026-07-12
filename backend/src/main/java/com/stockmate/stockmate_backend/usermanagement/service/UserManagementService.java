@@ -1,9 +1,10 @@
 package com.stockmate.stockmate_backend.usermanagement.service;
 
 import com.stockmate.stockmate_backend.usermanagement.dto.*;
+import com.stockmate.stockmate_backend.usermanagement.repository.StaffRepository;
+import com.stockmate.stockmate_backend.usermanagement.validator.StaffValidator;
 import com.stockmate.stockmate_backend.shared.entity.Role;
 import com.stockmate.stockmate_backend.shared.entity.User;
-import com.stockmate.stockmate_backend.shared.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +13,18 @@ import java.util.List;
 @Service
 public class UserManagementService {
 
-    private final UserRepository userRepository;
+    private final StaffRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final StaffValidator staffValidator;
 
-    public UserManagementService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserManagementService(StaffRepository userRepository, PasswordEncoder passwordEncoder, StaffValidator staffValidator) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.staffValidator = staffValidator;
     }
 
     public UserResponse createStaff(CreateStaffRequest request) {
+        staffValidator.validateCreateStaffRequest(request);
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email is already in use");
         }
