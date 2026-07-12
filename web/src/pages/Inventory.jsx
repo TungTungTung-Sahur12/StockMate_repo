@@ -32,19 +32,22 @@ export default function Inventory() {
   const { auth } = useAuth();
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState("");
+  const [search, setSearch] = useState("");
   const [form, setForm] = useState(emptyForm);
+  const [editingProductId, setEditingProductId] = useState(null);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
 
-  const fetchProducts = async (selectedCategory = "") => {
+  const fetchProducts = async (selectedCategory = category, selectedSearch = search) => {
     setLoadingProducts(true);
     try {
-      const res = await api.get("/products", {
-        params: selectedCategory ? { category: selectedCategory } : {},
-      });
+      const params = {};
+      if (selectedCategory) params.category = selectedCategory;
+      if (selectedSearch) params.name = selectedSearch;
+      const res = await api.get("/products", { params });
       setProducts(res.data || []);
     } catch (err) {
       setApiError("Failed to load inventory.");
@@ -54,8 +57,17 @@ export default function Inventory() {
   };
 
   useEffect(() => {
-    fetchProducts("");
+    fetchProducts("", "");
   }, []);
+
+  // Debounced search-as-you-type
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProducts(category, search);
+    }, 300);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   const validate = () => {
     const nextErrors = {};
@@ -97,35 +109,66 @@ export default function Inventory() {
 
     if (!validate()) return;
 
+    const payload = {
+      name: form.name.trim(),
+      category: form.category,
+      size: form.size.trim() || null,
+      price: Number(form.price),
+      quantity: Number(form.quantity),
+      lowStockThreshold: form.lowStockThreshold === "" ? 5 : Number(form.lowStockThreshold),
+    };
+
     setLoading(true);
     try {
-      await api.post("/products", {
-        name: form.name.trim(),
-        category: form.category,
-        size: form.size.trim() || null,
-        price: Number(form.price),
-        quantity: Number(form.quantity),
-        lowStockThreshold: form.lowStockThreshold === "" ? 5 : Number(form.lowStockThreshold),
-      });
-
-      setSuccessMsg("Product added successfully.");
+      if (editingProductId) {
+        await api.put(`/products/${editingProductId}`, payload);
+        setSuccessMsg("Product updated successfully.");
+      } else {
+        await api.post("/products", payload);
+        setSuccessMsg("Product added successfully.");
+      }
       setForm(emptyForm);
-      fetchProducts(category);
+      setEditingProductId(null);
+      fetchProducts(category, search);
     } catch (err) {
-      setApiError(err.response?.data?.message || "Failed to add product.");
+      setApiError(err.response?.data?.message || "Failed to save product.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditClick = (product) => {
+    setEditingProductId(product.productId);
+    setForm({
+      name: product.name,
+      category: product.category,
+      size: product.size || "",
+      price: String(product.price),
+      quantity: String(product.quantity),
+      lowStockThreshold: String(product.lowStockThreshold),
+    });
+    setApiError("");
+    setSuccessMsg("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProductId(null);
+    setForm(emptyForm);
+    setErrors({});
   };
 
   const handleDelete = async (product) => {
     setApiError("");
     setSuccessMsg("");
 
+    const confirmed = window.confirm(`Delete "${product.name}"? This cannot be undone.`);
+    if (!confirmed) return;
+
     try {
-      await api.delete(`/admin/products/${product.productId}`);
+      await api.delete(`/products/${product.productId}`);
       setSuccessMsg("Product deleted successfully.");
-      fetchProducts(category);
+      fetchProducts(category, search);
     } catch (err) {
       if (err.response?.status === 403) {
         setApiError("Only admins can delete products.");
@@ -137,7 +180,7 @@ export default function Inventory() {
 
   const handleCategoryChange = (value) => {
     setCategory(value);
-    fetchProducts(value);
+    fetchProducts(value, search);
   };
 
   return (
@@ -151,82 +194,102 @@ export default function Inventory() {
 
       <div className="signage">
         <span className="signage-title">Inventory</span>
-        <span className="signage-sub">Manage the ASCENDIA catalog with add and delete actions.</span>
+        <span className="signage-sub">Manage the ASCENDIA catalog with add, edit, and delete actions.</span>
       </div>
 
-      <div className="store-card">
-        <h2>Add Product</h2>
-        <p className="subtitle">Create a new SKU for the ASCENDIA collection using the same catalog rules as the backend.</p>
+      {auth?.role === "ADMIN" && (
+        <div className="store-card">
+          <h2>{editingProductId ? "Edit Product" : "Add Product"}</h2>
+          <p className="subtitle">
+            {editingProductId
+              ? "Update this product's details below."
+              : "Create a new SKU for the ASCENDIA collection using the same catalog rules as the backend."}
+          </p>
 
-        {apiError && <div className="alert-error">{apiError}</div>}
-        {successMsg && <div className="alert-success">{successMsg}</div>}
+          {apiError && <div className="alert-error">{apiError}</div>}
+          {successMsg && <div className="alert-success">{successMsg}</div>}
 
-        <form onSubmit={handleSubmit} noValidate className="inventory-form">
-          <div className="form-group">
-            <label>Product Name</label>
-            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            {errors.name && <div className="field-error">{errors.name}</div>}
-          </div>
+          <form onSubmit={handleSubmit} noValidate className="inventory-form">
+            <div className="form-group">
+              <label>Product Name</label>
+              <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              {errors.name && <div className="field-error">{errors.name}</div>}
+            </div>
 
-          <div className="form-group">
-            <label>Category</label>
-            <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-              {CATEGORY_OPTIONS.filter((c) => c.value).map((c) => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
-            </select>
-            {errors.category && <div className="field-error">{errors.category}</div>}
-          </div>
+            <div className="form-group">
+              <label>Category</label>
+              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                {CATEGORY_OPTIONS.filter((c) => c.value).map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+              {errors.category && <div className="field-error">{errors.category}</div>}
+            </div>
 
-          <div className="form-group">
-            <label>Size (optional)</label>
-            <input value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} />
-          </div>
+            <div className="form-group">
+              <label>Size (optional)</label>
+              <input value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} />
+            </div>
 
-          <div className="form-group">
-            <label>Price</label>
-            <input type="number" step="0.01" min="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
-            {errors.price && <div className="field-error">{errors.price}</div>}
-          </div>
+            <div className="form-group">
+              <label>Price</label>
+              <input type="number" step="0.01" min="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+              {errors.price && <div className="field-error">{errors.price}</div>}
+            </div>
 
-          <div className="form-group">
-            <label>Quantity</label>
-            <input type="number" min="0" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
-            {errors.quantity && <div className="field-error">{errors.quantity}</div>}
-          </div>
+            <div className="form-group">
+              <label>Quantity</label>
+              <input type="number" min="0" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
+              {errors.quantity && <div className="field-error">{errors.quantity}</div>}
+            </div>
 
-          <div className="form-group">
-            <label>Low Stock Threshold (optional)</label>
-            <input type="number" min="0" value={form.lowStockThreshold} onChange={(e) => setForm({ ...form, lowStockThreshold: e.target.value })} />
-            {errors.lowStockThreshold && <div className="field-error">{errors.lowStockThreshold}</div>}
-          </div>
+            <div className="form-group">
+              <label>Low Stock Threshold (optional)</label>
+              <input type="number" min="0" value={form.lowStockThreshold} onChange={(e) => setForm({ ...form, lowStockThreshold: e.target.value })} />
+              {errors.lowStockThreshold && <div className="field-error">{errors.lowStockThreshold}</div>}
+            </div>
 
-          <button className="btn-store" type="submit" disabled={loading}>
-            {loading ? "Adding..." : "Add Product"}
-          </button>
-        </form>
-      </div>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button className="btn-store" type="submit" disabled={loading}>
+                {loading ? "Saving..." : editingProductId ? "Update Product" : "Add Product"}
+              </button>
+              {editingProductId && (
+                <button type="button" className="btn-small" onClick={handleCancelEdit}>
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="store-card">
         <div className="inventory-toolbar">
           <h2>ASCENDIA Inventory</h2>
-          <select value={category} onChange={(e) => handleCategoryChange(e.target.value)}>
-            {CATEGORY_OPTIONS.map((c) => (
-              <option key={c.value || "all"} value={c.value}>{c.label}</option>
-            ))}
-          </select>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <input
+              type="text"
+              placeholder="Search by name..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <select value={category} onChange={(e) => handleCategoryChange(e.target.value)}>
+              {CATEGORY_OPTIONS.map((c) => (
+                <option key={c.value || "all"} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {loadingProducts ? (
           <p className="subtitle">Loading inventory...</p>
         ) : products.length === 0 ? (
-          <p className="subtitle">No products found for the selected category.</p>
+          <p className="subtitle">No products found.</p>
         ) : (
           <div className="product-grid inventory-grid">
             {products.map((product) => (
               <div className="inventory-card" key={product.productId}>
                 <div className="inventory-image">
-                  {/* Real image placeholder; swap in an <img> once product photos are available. */}
                   <span>{CATEGORY_LABELS[product.category] ? CATEGORY_LABELS[product.category].toUpperCase() : "PRODUCT"}</span>
                 </div>
 
@@ -234,9 +297,14 @@ export default function Inventory() {
                   <div className="inventory-title-row">
                     <h3>{product.name}</h3>
                     {auth?.role === "ADMIN" && (
-                      <button className="btn-small danger" onClick={() => handleDelete(product)}>
-                        Delete
-                      </button>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <button className="btn-small" onClick={() => handleEditClick(product)}>
+                          Edit
+                        </button>
+                        <button className="btn-small danger" onClick={() => handleDelete(product)}>
+                          Delete
+                        </button>
+                      </div>
                     )}
                   </div>
                   <p className="inventory-meta">Category: {CATEGORY_LABELS[product.category] || product.category}</p>

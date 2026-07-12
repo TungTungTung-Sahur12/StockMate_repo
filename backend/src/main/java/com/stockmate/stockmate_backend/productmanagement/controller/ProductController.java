@@ -28,11 +28,9 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getAllProducts(
-            @RequestParam(required = false) ProductCategory category) {
-        if (category != null) {
-            return ResponseEntity.ok(productService.getProductsByCategory(category));
-        }
-        return ResponseEntity.ok(productService.getAllProducts());
+            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) String name) {
+        return ResponseEntity.ok(productService.searchProducts(category, name));
     }
 
     @GetMapping("/{productId}")

@@ -54,6 +54,25 @@ public class ProductService {
                 .toList();
     }
 
+    public List<ProductResponse> searchProducts(ProductCategory category, String name) {
+        List<Product> results;
+
+        boolean hasCategory = category != null;
+        boolean hasName = name != null && !name.isBlank();
+
+        if (hasCategory && hasName) {
+            results = productRepository.findByCategoryAndNameContainingIgnoreCase(category, name);
+        } else if (hasCategory) {
+            results = productRepository.findByCategory(category);
+        } else if (hasName) {
+            results = productRepository.findByNameContainingIgnoreCase(name);
+        } else {
+            results = productRepository.findAll();
+        }
+
+        return results.stream().map(this::toResponse).toList();
+    }
+
     public ProductResponse getProductById(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
