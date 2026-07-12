@@ -2,9 +2,10 @@ package com.stockmate.stockmate_backend.productmanagement.service;
 
 import com.stockmate.stockmate_backend.productmanagement.dto.CreateProductRequest;
 import com.stockmate.stockmate_backend.productmanagement.dto.ProductResponse;
+import com.stockmate.stockmate_backend.productmanagement.repository.ProductRepository;
+import com.stockmate.stockmate_backend.productmanagement.validator.ProductValidator;
 import com.stockmate.stockmate_backend.shared.entity.Product;
 import com.stockmate.stockmate_backend.shared.entity.ProductCategory;
-import com.stockmate.stockmate_backend.shared.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,12 +16,15 @@ public class ProductService {
     private static final int DEFAULT_LOW_STOCK_THRESHOLD = 5;
 
     private final ProductRepository productRepository;
+    private final ProductValidator productValidator;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ProductValidator productValidator) {
         this.productRepository = productRepository;
+        this.productValidator = productValidator;
     }
 
     public ProductResponse createProduct(CreateProductRequest request) {
+        productValidator.validateCreateProductRequest(request);
         Product product = Product.builder()
                 .name(request.getName())
                 .category(request.getCategory())
@@ -57,6 +61,8 @@ public class ProductService {
     }
 
     public ProductResponse updateProduct(Long productId, CreateProductRequest request) {
+        productValidator.validateCreateProductRequest(request);
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
