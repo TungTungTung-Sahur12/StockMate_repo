@@ -1,9 +1,10 @@
 package com.stockmate.stockmate_backend.userauthentication.service;
 
 import com.stockmate.stockmate_backend.userauthentication.dto.*;
+import com.stockmate.stockmate_backend.userauthentication.repository.AuthUserRepository;
+import com.stockmate.stockmate_backend.userauthentication.validator.AuthValidator;
 import com.stockmate.stockmate_backend.shared.entity.Role;
 import com.stockmate.stockmate_backend.shared.entity.User;
-import com.stockmate.stockmate_backend.shared.repository.UserRepository;
 import com.stockmate.stockmate_backend.shared.security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,20 +12,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserAuthService {
 
-    private final UserRepository userRepository;
+    private final AuthUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final AuthValidator authValidator;
 
-    public UserAuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public UserAuthService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, AuthValidator authValidator) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.authValidator = authValidator;
     }
 
     public void registerFirstAdmin(RegisterRequest request) {
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
-        }
+        authValidator.validateRegisterRequest(request);
 
         if (userRepository.existsByRole(Role.ADMIN)) {
             throw new IllegalStateException("Admin account already exists. Registration is closed.");
@@ -46,6 +47,8 @@ public class UserAuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+        authValidator.validateLoginRequest(request);
+
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
