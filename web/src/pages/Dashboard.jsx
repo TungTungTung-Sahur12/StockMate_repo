@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import api from "../api/axios";
 import "../styles/dashboard.css";
 
 const PRODUCTS = [
@@ -18,12 +20,41 @@ export default function Dashboard() {
   const { auth, logout } = useAuth();
   const navigate = useNavigate();
 
+  const [totalProducts, setTotalProducts] = useState("—");
+  const [lowStockCount, setLowStockCount] = useState("—");
+  const [todaysSales, setTodaysSales] = useState("—");
+  const [staffCount, setStaffCount] = useState("—");
+
+  const isAdmin = auth?.role === "ADMIN";
+
+  useEffect(() => {
+    api.get("/products").then((res) => {
+      const products = res.data || [];
+      setTotalProducts(products.length);
+      setLowStockCount(products.filter((p) => p.isLowStock).length);
+    }).catch(() => {});
+
+    api.get("/sales").then((res) => {
+      const sales = res.data || [];
+      const today = new Date().toDateString();
+      const count = sales.filter((s) => new Date(s.createdAt).toDateString() === today).length;
+      setTodaysSales(count);
+    }).catch(() => {});
+
+    if (isAdmin) {
+      api.get("/admin/users").then((res) => {
+        const users = res.data || [];
+        setStaffCount(users.filter((u) => u.role === "STAFF").length);
+      }).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  const isAdmin = auth?.role === "ADMIN";
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
@@ -45,20 +76,20 @@ export default function Dashboard() {
 
       <div className="stat-row">
         <div className="stat-card float-1">
-          <div className="stat-value">—</div>
+          <div className="stat-value">{totalProducts}</div>
           <div className="stat-label">Total Products</div>
         </div>
         <div className="stat-card float-2">
-          <div className="stat-value">—</div>
+          <div className="stat-value">{lowStockCount}</div>
           <div className="stat-label">Low Stock Alerts</div>
         </div>
         <div className="stat-card float-3">
-          <div className="stat-value">—</div>
+          <div className="stat-value">{todaysSales}</div>
           <div className="stat-label">Today's Sales</div>
         </div>
         {isAdmin && (
           <div className="stat-card float-1">
-            <div className="stat-value">—</div>
+            <div className="stat-value">{staffCount}</div>
             <div className="stat-label">Staff Accounts</div>
           </div>
         )}
@@ -81,6 +112,16 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <div className="store-card admin-card">
+        <div className="admin-card-text">
+          <h2>Record a Sale</h2>
+          <p className="subtitle">Log a sale and automatically update stock levels.</p>
+        </div>
+        <Link to="/record-sale" className="btn-store">
+          Record a Sale →
+        </Link>
+      </div>
+
       {isAdmin && (
         <div className="store-card admin-card">
           <div className="admin-card-text">
@@ -90,15 +131,6 @@ export default function Dashboard() {
           <Link to="/manage-users" className="btn-store">
             Manage Staff Accounts →
           </Link>
-        </div>
-      )}
-
-      {!isAdmin && (
-        <div className="store-card staff-card">
-          <h2>Staff Access</h2>
-          <p className="subtitle">
-            You're logged in as Staff. Inventory and sales tools will appear here once enabled by your Admin.
-          </p>
         </div>
       )}
     </div>
