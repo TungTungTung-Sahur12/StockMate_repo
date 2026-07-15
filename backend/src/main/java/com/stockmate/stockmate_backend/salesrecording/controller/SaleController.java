@@ -2,12 +2,15 @@ package com.stockmate.stockmate_backend.salesrecording.controller;
 
 import com.stockmate.stockmate_backend.salesrecording.dto.CreateSaleRequest;
 import com.stockmate.stockmate_backend.salesrecording.dto.SaleResponse;
+import com.stockmate.stockmate_backend.salesrecording.dto.SalesSummaryResponse;
 import com.stockmate.stockmate_backend.salesrecording.service.SaleService;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -26,8 +29,18 @@ public class SaleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SaleResponse>> getAllSales() {
-        return ResponseEntity.ok(saleService.getAllSales());
+    public ResponseEntity<List<SaleResponse>> getAllSales(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) String productName) {
+        return ResponseEntity.ok(saleService.getAllSales(startDate, endDate, productName));
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<SalesSummaryResponse> getSalesSummary(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return ResponseEntity.ok(saleService.getSalesSummary(startDate, endDate));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

@@ -3,6 +3,7 @@ package com.stockmate.stockmate_backend.salesrecording.service;
 import com.stockmate.stockmate_backend.productmanagement.repository.ProductRepository;
 import com.stockmate.stockmate_backend.salesrecording.dto.CreateSaleRequest;
 import com.stockmate.stockmate_backend.salesrecording.dto.SaleResponse;
+import com.stockmate.stockmate_backend.salesrecording.dto.SalesSummaryResponse;
 import com.stockmate.stockmate_backend.salesrecording.repository.SaleRepository;
 import com.stockmate.stockmate_backend.salesrecording.validator.SaleValidator;
 import com.stockmate.stockmate_backend.shared.entity.Product;
@@ -11,7 +12,11 @@ import com.stockmate.stockmate_backend.shared.entity.User;
 import com.stockmate.stockmate_backend.userauthentication.repository.AuthUserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -32,6 +37,7 @@ public class SaleService {
         this.saleValidator = saleValidator;
     }
 
+    @Transactional
     public SaleResponse createSale(CreateSaleRequest request) {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
@@ -59,10 +65,20 @@ public class SaleService {
         return toResponse(saved);
     }
 
-    public List<SaleResponse> getAllSales() {
-        return saleRepository.findAllByOrderByCreatedAtDesc().stream()
+    public List<SaleResponse> getAllSales(LocalDate startDate, LocalDate endDate, String productName) {
+        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+        LocalDateTime endDateTime = endDate != null ? endDate.atTime(LocalTime.MAX) : null;
+
+        return saleRepository.findSalesWithFilters(startDateTime, endDateTime, productName).stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public SalesSummaryResponse getSalesSummary(LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+        LocalDateTime endDateTime = endDate != null ? endDate.atTime(LocalTime.MAX) : null;
+
+        return saleRepository.getSalesSummary(startDateTime, endDateTime);
     }
 
     private SaleResponse toResponse(Sale sale) {
