@@ -27,18 +27,19 @@ export default function Dashboard() {
 
   const isAdmin = auth?.role === "ADMIN";
 
-  useEffect(() => {
+  const refreshDashboardData = () => {
     api.get("/products").then((res) => {
       const products = res.data || [];
       setTotalProducts(products.length);
       setLowStockCount(products.filter((p) => p.isLowStock).length);
     }).catch(() => {});
 
-    api.get("/sales").then((res) => {
-      const sales = res.data || [];
-      const today = new Date().toDateString();
-      const count = sales.filter((s) => new Date(s.createdAt).toDateString() === today).length;
-      setTodaysSales(count);
+    const today = new Date();
+    const startDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const endDate = startDate;
+
+    api.get("/sales/summary", { params: { startDate, endDate } }).then((res) => {
+      setTodaysSales(res.data?.totalCount ?? 0);
     }).catch(() => {});
 
     if (isAdmin) {
@@ -47,8 +48,17 @@ export default function Dashboard() {
         setStaffCount(users.filter((u) => u.role === "STAFF").length);
       }).catch(() => {});
     }
+  };
+
+  useEffect(() => {
+    refreshDashboardData();
+
+    const handleFocus = () => refreshDashboardData();
+    window.addEventListener("focus", handleFocus);
+
+    return () => window.removeEventListener("focus", handleFocus);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAdmin]);
 
   const handleLogout = () => {
     logout();
