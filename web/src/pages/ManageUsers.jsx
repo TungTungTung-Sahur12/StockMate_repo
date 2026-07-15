@@ -6,6 +6,7 @@ import "../styles/dashboard.css";
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [editingUserId, setEditingUserId] = useState(null);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -22,13 +23,13 @@ export default function ManageUsers() {
 
   useEffect(() => { fetchUsers(); }, []);
 
-  const validate = () => {
+  const validate = (isEdit = false) => {
     const e = {};
     if (!form.name.trim()) e.name = "Name is required";
     if (!form.email.trim()) e.email = "Email is required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Invalid email format";
-    if (!form.password) e.password = "Password is required";
-    else if (form.password.length < 8) e.password = "Must be at least 8 characters";
+    if (!isEdit && !form.password) e.password = "Password is required";
+    else if (!isEdit && form.password.length < 8) e.password = "Must be at least 8 characters";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -37,19 +38,39 @@ export default function ManageUsers() {
     e.preventDefault();
     setApiError("");
     setSuccessMsg("");
-    if (!validate()) return;
+    if (!validate(editingUserId)) return;
 
     setLoading(true);
     try {
-      await api.post("/admin/staff", form);
-      setSuccessMsg(`Staff account for ${form.name} created successfully.`);
+      if (editingUserId) {
+        await api.put(`/admin/users/${editingUserId}`, { name: form.name.trim(), email: form.email.trim() });
+        setSuccessMsg(`Staff account updated successfully.`);
+      } else {
+        await api.post("/admin/staff", form);
+        setSuccessMsg(`Staff account for ${form.name} created successfully.`);
+      }
       setForm({ name: "", email: "", password: "" });
+      setEditingUserId(null);
       fetchUsers();
     } catch (err) {
-      setApiError(err.response?.data?.message || "Failed to create staff account.");
+      setApiError(err.response?.data?.message || (editingUserId ? "Failed to update staff account." : "Failed to create staff account."));
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditClick = (user) => {
+    setEditingUserId(user.userId);
+    setForm({ name: user.name, email: user.email, password: "" });
+    setApiError("");
+    setSuccessMsg("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingUserId(null);
+    setForm({ name: "", email: "", password: "" });
+    setErrors({});
   };
 
   const toggleStatus = async (user) => {
@@ -71,8 +92,8 @@ export default function ManageUsers() {
       </div>
 
       <div className="store-card">
-        <h2>Add Staff Account</h2>
-        <p className="subtitle">Only the ASCENDIA owner (Admin) can create staff access.</p>
+        <h2>{editingUserId ? "Edit Staff Account" : "Add Staff Account"}</h2>
+        <p className="subtitle">Only the ASCENDIA owner (Admin) can create or update staff access.</p>
 
         {apiError && <div className="alert-error">{apiError}</div>}
         {successMsg && <div className="alert-success">{successMsg}</div>}
@@ -88,14 +109,23 @@ export default function ManageUsers() {
             <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             {errors.email && <div className="field-error">{errors.email}</div>}
           </div>
-          <div className="form-group">
-            <label>Temporary Password</label>
-            <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-            {errors.password && <div className="field-error">{errors.password}</div>}
+          {!editingUserId && (
+            <div className="form-group">
+              <label>Temporary Password</label>
+              <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+              {errors.password && <div className="field-error">{errors.password}</div>}
+            </div>
+          )}
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button className="btn-store" type="submit" disabled={loading}>
+              {loading ? (editingUserId ? "Updating..." : "Adding...") : editingUserId ? "Update Staff" : "Add Staff"}
+            </button>
+            {editingUserId && (
+              <button type="button" className="btn-small" onClick={handleCancelEdit}>
+                Cancel
+              </button>
+            )}
           </div>
-          <button className="btn-store" type="submit" disabled={loading}>
-            {loading ? "Adding..." : "Add Staff"}
-          </button>
         </form>
       </div>
 
@@ -116,9 +146,14 @@ export default function ManageUsers() {
                 </span></td>
                 <td>
                   {u.role !== "ADMIN" && (
-                    <button className="btn-small" onClick={() => toggleStatus(u)}>
-                      {u.isActive ? "Deactivate" : "Activate"}
-                    </button>
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <button className="btn-small" onClick={() => handleEditClick(u)}>
+                        Edit
+                      </button>
+                      <button className="btn-small" onClick={() => toggleStatus(u)}>
+                        {u.isActive ? "Deactivate" : "Activate"}
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>

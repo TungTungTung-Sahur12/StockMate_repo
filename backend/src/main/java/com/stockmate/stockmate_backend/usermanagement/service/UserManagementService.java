@@ -47,6 +47,25 @@ public class UserManagementService {
                 .toList();
     }
 
+    public UserResponse updateUser(Long userId, UpdateStaffRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (user.getRole() == Role.ADMIN) {
+            throw new IllegalStateException("Cannot edit an Admin account");
+        }
+
+        if (!user.getEmail().equalsIgnoreCase(request.getEmail())
+                && userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email is already in use");
+        }
+
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        User saved = userRepository.save(user);
+        return toResponse(saved);
+    }
+
     public UserResponse updateStatus(Long userId, boolean isActive) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

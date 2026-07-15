@@ -29,6 +29,12 @@ public class UserManagementController {
         return ResponseEntity.ok(userManagementService.getAllUsers());
     }
 
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long userId,
+                                                   @Valid @RequestBody UpdateStaffRequest request) {
+        return ResponseEntity.ok(userManagementService.updateUser(userId, request));
+    }
+
     @PatchMapping("/users/{userId}/status")
     public ResponseEntity<UserResponse> updateStatus(@PathVariable Long userId,
                                                        @RequestBody UpdateStatusRequest request) {
