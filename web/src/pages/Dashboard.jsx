@@ -54,9 +54,20 @@ export default function Dashboard() {
     refreshDashboardData();
 
     const handleFocus = () => refreshDashboardData();
-    window.addEventListener("focus", handleFocus);
+    const handleInventoryUpdated = () => refreshDashboardData();
 
-    return () => window.removeEventListener("focus", handleFocus);
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("stockmate_inventory_updated", handleInventoryUpdated);
+    window.addEventListener("storage", (event) => {
+      if (event.key === "stockmate_inventory_updated") {
+        refreshDashboardData();
+      }
+    });
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("stockmate_inventory_updated", handleInventoryUpdated);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 

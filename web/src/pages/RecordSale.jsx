@@ -8,6 +8,9 @@ export default function RecordSale() {
   const [sales, setSales] = useState([]);
   const [productId, setProductId] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [productName, setProductName] = useState("");
   const [apiError, setApiError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,9 +24,14 @@ export default function RecordSale() {
     }
   };
 
-  const fetchSales = async () => {
+  const fetchSales = async (filters = {}) => {
     try {
-      const res = await api.get("/sales");
+      const params = {};
+      if (filters.startDate) params.startDate = filters.startDate;
+      if (filters.endDate) params.endDate = filters.endDate;
+      if (filters.productName) params.productName = filters.productName;
+
+      const res = await api.get("/sales", { params });
       setSales(res.data || []);
     } catch (err) {
       setApiError("Failed to load sales history.");
@@ -34,6 +42,18 @@ export default function RecordSale() {
     fetchProducts();
     fetchSales();
   }, []);
+
+  const handleFilterSubmit = (e) => {
+    e.preventDefault();
+    fetchSales({ startDate, endDate, productName });
+  };
+
+  const handleClearFilters = () => {
+    setStartDate("");
+    setEndDate("");
+    setProductName("");
+    fetchSales();
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,6 +139,29 @@ export default function RecordSale() {
 
       <div className="store-card">
         <h2>Recent Sales</h2>
+
+        <form onSubmit={handleFilterSubmit} noValidate style={{ display: "grid", gap: "12px", marginBottom: "16px" }}>
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <div className="form-group" style={{ margin: 0, flex: "1 1 180px" }}>
+              <label>Start Date</label>
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            </div>
+            <div className="form-group" style={{ margin: 0, flex: "1 1 180px" }}>
+              <label>End Date</label>
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            </div>
+            <div className="form-group" style={{ margin: 0, flex: "1 1 220px" }}>
+              <label>Product Name</label>
+              <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Search by product" />
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button className="btn-store" type="submit">Filter</button>
+            <button type="button" className="btn-small" onClick={handleClearFilters}>Clear Filters</button>
+          </div>
+        </form>
+
         {sales.length === 0 ? (
           <p className="subtitle">No sales recorded yet.</p>
         ) : (
