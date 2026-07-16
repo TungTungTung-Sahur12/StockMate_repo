@@ -1,6 +1,7 @@
 package com.stockmate.stockmate_backend.salesrecording.service;
 
 import com.stockmate.stockmate_backend.productmanagement.repository.ProductRepository;
+import java.math.BigDecimal;
 import com.stockmate.stockmate_backend.salesrecording.dto.CreateSaleRequest;
 import com.stockmate.stockmate_backend.salesrecording.dto.SaleResponse;
 import com.stockmate.stockmate_backend.salesrecording.dto.SalesSummaryResponse;
@@ -78,7 +79,12 @@ public class SaleService {
         LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
         LocalDateTime endDateTime = endDate != null ? endDate.atTime(LocalTime.MAX) : null;
 
-        return saleRepository.getSalesSummary(startDateTime, endDateTime);
+        List<Object[]> results = saleRepository.getSalesSummary(startDateTime, endDateTime);
+        Object[] result = results.get(0);
+        Long totalCount = ((Number) result[0]).longValue();
+        BigDecimal totalRevenue = result[1] != null ? new BigDecimal(result[1].toString()) : BigDecimal.ZERO;
+
+        return new SalesSummaryResponse(totalCount, totalRevenue);
     }
 
     private SaleResponse toResponse(Sale sale) {
