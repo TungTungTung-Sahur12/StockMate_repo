@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/dashboard.css";
@@ -7,6 +7,7 @@ export default function RecordSale() {
   const [products, setProducts] = useState([]);
   const [sales, setSales] = useState([]);
   const [productId, setProductId] = useState("");
+  const [productSearch, setProductSearch] = useState("");
   const [quantity, setQuantity] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -14,6 +15,8 @@ export default function RecordSale() {
   const [apiError, setApiError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [quantityError, setQuantityError] = useState("");
+  const [summary, setSummary] = useState({ totalCount: 0, totalRevenue: 0 });
 
   const fetchProducts = async () => {
     try {
@@ -24,6 +27,12 @@ export default function RecordSale() {
     }
   };
 
+  const filteredProducts = useMemo(() => {
+    const q = productSearch.trim().toLowerCase();
+    if (!q) return products;
+    return products.filter((p) => p.name.toLowerCase().includes(q));
+  }, [products, productSearch]);
+
   const fetchSales = async (filters = {}) => {
     try {
       const params = {};
@@ -33,8 +42,21 @@ export default function RecordSale() {
 
       const res = await api.get("/sales", { params });
       setSales(res.data || []);
+      fetchSalesSummary(params);
     } catch (err) {
       setApiError("Failed to load sales history.");
+    }
+  };
+
+  const fetchSalesSummary = async (params = {}) => {
+    try {
+      const res = await api.get("/sales/summary", { params });
+      setSummary({
+        totalCount: res.data?.totalCount ?? res.data?.totalCount ?? 0,
+        totalRevenue: res.data?.totalRevenue ?? res.data?.totalRevenue ?? 0,
+      });
+    } catch (err) {
+      // ignore summary errors
     }
   };
 
@@ -59,6 +81,7 @@ export default function RecordSale() {
     e.preventDefault();
     setApiError("");
     setSuccessMsg("");
+    setQuantityError("");
 
     if (!productId) {
       setApiError("Please select a product.");
@@ -67,6 +90,12 @@ export default function RecordSale() {
     const qty = Number(quantity);
     if (!Number.isInteger(qty) || qty < 1) {
       setApiError("Quantity must be at least 1.");
+      return;
+    }
+
+    const selected = products.find((p) => p.productId === Number(productId));
+    if (selected && qty > Number(selected.quantity)) {
+      setQuantityError(`Quantity exceeds available stock (${selected.quantity}).`);
       return;
     }
 
@@ -81,8 +110,9 @@ export default function RecordSale() {
       );
       setProductId("");
       setQuantity("");
-      fetchProducts();
-      fetchSales();
+      // refresh inventory and sales so UI reflects updated stock/flags
+      await fetchProducts();
+      await fetchSales();
     } catch (err) {
       setApiError(err.response?.data?.message || "Failed to record sale.");
     } finally {
@@ -111,9 +141,15 @@ export default function RecordSale() {
         <form onSubmit={handleSubmit} noValidate className="inventory-form">
           <div className="form-group">
             <label>Product</label>
-            <select value={productId} onChange={(e) => setProductId(e.target.value)}>
+            <input
+              placeholder="Search products..."
+              value={productSearch}
+              onChange={(e) => setProductSearch(e.target.value)}
+              style={{ marginBottom: 8 }}
+            />
+            <select value={productId} onChange={(e) => { setProductId(e.target.value); setQuantityError(""); }}>
               <option value="">Select a product</option>
-              {products.map((p) => (
+              {filteredProducts.map((p) => (
                 <option key={p.productId} value={p.productId}>
                   {p.name} — {p.quantity} in stock
                 </option>
@@ -127,14 +163,41 @@ export default function RecordSale() {
               type="number"
               min="1"
               value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
+              onChange={(e) => { setQuantity(e.target.value); setQuantityError(""); }}
             />
+            {quantityError && <div className="field-error">{quantityError}</div>}
+            {/* Live total preview */}
+            {productId && quantity && !quantityError && (() => {
+              const sel = products.find((p) => p.productId === Number(productId));
+              if (sel) {
+                const totalPreview = Number(sel.price) * Number(quantity);
+                return <div style={{ marginTop: 8 }}>Preview total: ₱{Number(totalPreview).toFixed(2)}</div>;
+              }
+              return null;
+            })()}
           </div>
 
           <button className="btn-store" type="submit" disabled={loading}>
-            {loading ? "Recording..." : "Record Sale"}
+            {loading ? (
+              <>
+                <span className="spinner" />Recording...
+              </>
+            ) : (
+              "Record Sale"
+            )}
           </button>
         </form>
+      </div>
+
+      <div className="summary-row">
+        <div className="stat-card summary-card">
+          <div className="stat-value">{summary.totalCount}</div>
+          <div className="stat-label">Sales Count</div>
+        </div>
+        <div className="stat-card summary-card">
+          <div className="stat-value">₱{Number(summary.totalRevenue).toFixed(2)}</div>
+          <div className="stat-label">Total Revenue</div>
+        </div>
       </div>
 
       <div className="store-card">
