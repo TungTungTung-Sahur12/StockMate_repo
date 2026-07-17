@@ -12,18 +12,18 @@ import java.util.Date;
 public class JwtUtil {
 
     @Value("${app.jwt.secret}")
-    private String secret;
+private String jwtSecret;
 
-    @Value("${app.jwt.expiration-ms}")
-    private long expirationMs;
+@Value("${app.jwt.expiration-ms}")
+private long jwtExpirationMs;
 
     private Key getKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     public String generateToken(String email, String role) {
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + expirationMs);
+        Date expiry = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
                 .setSubject(email)
