@@ -4,6 +4,17 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api",
 });
 
+api.interceptors.request.use((config) => {
+  const stored = localStorage.getItem("stockmate_auth");
+  if (stored) {
+    const auth = JSON.parse(stored);
+    if (auth?.token) {
+      config.headers.Authorization = `Bearer ${auth.token}`;
+    }
+  }
+  return config;
+});
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
