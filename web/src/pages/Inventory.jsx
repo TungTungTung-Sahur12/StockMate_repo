@@ -130,6 +130,7 @@ export default function Inventory() {
       setForm(emptyForm);
       setEditingProductId(null);
       fetchProducts(category, search);
+      window.dispatchEvent(new Event("stockmate_inventory_updated"));
     } catch (err) {
       setApiError(err.response?.data?.message || "Failed to save product.");
     } finally {

@@ -55,18 +55,20 @@ export default function Dashboard() {
 
     const handleFocus = () => refreshDashboardData();
     const handleInventoryUpdated = () => refreshDashboardData();
-
-    window.addEventListener("focus", handleFocus);
-    window.addEventListener("stockmate_inventory_updated", handleInventoryUpdated);
-    window.addEventListener("storage", (event) => {
+  const handleStorage = (event) => {
       if (event.key === "stockmate_inventory_updated") {
         refreshDashboardData();
       }
-    });
+    };
+
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("stockmate_inventory_updated", handleInventoryUpdated);
+    window.addEventListener("storage", handleStorage);
 
     return () => {
       window.removeEventListener("focus", handleFocus);
       window.removeEventListener("stockmate_inventory_updated", handleInventoryUpdated);
+      window.removeEventListener("storage", handleStorage);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
