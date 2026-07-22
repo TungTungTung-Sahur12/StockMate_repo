@@ -22,7 +22,8 @@ export default function Dashboard() {
 
   const [totalProducts, setTotalProducts] = useState("—");
   const [lowStockCount, setLowStockCount] = useState("—");
-  const [todaysSales, setTodaysSales] = useState("—");
+  const [todaysRevenue, setTodaysRevenue] = useState("—");
+  const [totalRevenue, setTotalRevenue] = useState("—");
   const [staffCount, setStaffCount] = useState("—");
 
   const isAdmin = auth?.role === "ADMIN";
@@ -39,7 +40,11 @@ export default function Dashboard() {
     const endDate = startDate;
 
     api.get("/sales/summary", { params: { startDate, endDate } }).then((res) => {
-      setTodaysSales(res.data?.totalCount ?? 0);
+      setTodaysRevenue(Number(res.data?.totalRevenue ?? 0));
+    }).catch(() => {});
+
+    api.get("/sales/summary").then((res) => {
+      setTotalRevenue(Number(res.data?.totalRevenue ?? 0));
     }).catch(() => {});
 
     if (isAdmin) {
@@ -107,8 +112,12 @@ export default function Dashboard() {
           <div className="stat-label">Low Stock Alerts</div>
         </div>
         <div className="stat-card float-3">
-          <div className="stat-value">{todaysSales}</div>
-          <div className="stat-label">Today's Sales</div>
+          <div className="stat-value">{typeof todaysRevenue === "number" ? `₱${todaysRevenue.toFixed(2)}` : todaysRevenue}</div>
+          <div className="stat-label">Today's Revenue</div>
+        </div>
+        <div className="stat-card float-3">
+          <div className="stat-value">{typeof totalRevenue === "number" ? `₱${totalRevenue.toFixed(2)}` : totalRevenue}</div>
+          <div className="stat-label">Total Revenue</div>
         </div>
         {isAdmin && (
           <div className="stat-card float-1">
