@@ -17,10 +17,18 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            buildConfigField("String", "BASE_URL", "\"https://stockmate-2v4m.onrender.com/\"")
+        }
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://stockmate-2v4m.onrender.com/\"")
         }
     }
     compileOptions {
