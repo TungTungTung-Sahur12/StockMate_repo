@@ -18,6 +18,7 @@ public class CreateProductRequest {
     @NotNull(message = "Category is required")
     private ProductCategory category;
 
+    @NotBlank(message = "Size is required")
     private String size;
 
     @NotNull(message = "Price is required")

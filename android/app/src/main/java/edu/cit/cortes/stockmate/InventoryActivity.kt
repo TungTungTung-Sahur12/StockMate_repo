@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +24,7 @@ class InventoryActivity : AppCompatActivity() {
     private lateinit var productAdapter: ProductAdapter
     private val displayCategories = listOf("All", "Tee", "Box Fit Tee", "Hoodie", "Pants", "Cap", "Polo", "Shorts", "Longsleeves", "Accessories")
     private val backendCategories = listOf<String?>(null, "TEE", "BOX_FIT_TEE", "HOODIE", "PANTS", "CAP", "POLO", "SHORTS", "LONGSLEEVES", "ACCESSORIES")
+    private val sizeOptions = listOf("Select size", "XS", "S", "M", "L", "XL", "XXL")
     private var allProducts: List<ProductResponse> = emptyList()
     private var selectedCategory: String? = null
 
@@ -33,12 +35,12 @@ class InventoryActivity : AppCompatActivity() {
         val backButton = findViewById<MaterialButton>(R.id.backToDashboard)
         val categorySpinner = findViewById<Spinner>(R.id.categorySpinner)
         val nameLayout = findViewById<TextInputLayout>(R.id.nameLayout)
-        val sizeLayout = findViewById<TextInputLayout>(R.id.sizeLayout)
+        val sizeSpinner = findViewById<Spinner>(R.id.sizeSpinner)
+        val sizeError = findViewById<TextView>(R.id.sizeError)
         val priceLayout = findViewById<TextInputLayout>(R.id.priceLayout)
         val quantityLayout = findViewById<TextInputLayout>(R.id.quantityLayout)
         val thresholdLayout = findViewById<TextInputLayout>(R.id.thresholdLayout)
         val nameInput = findViewById<TextInputEditText>(R.id.productNameInput)
-        val sizeInput = findViewById<TextInputEditText>(R.id.productSizeInput)
         val priceInput = findViewById<TextInputEditText>(R.id.productPriceInput)
         val quantityInput = findViewById<TextInputEditText>(R.id.productQuantityInput)
         val thresholdInput = findViewById<TextInputEditText>(R.id.productThresholdInput)
@@ -57,6 +59,10 @@ class InventoryActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) = Unit
         }
 
+        val sizeAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, sizeOptions)
+        sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        sizeSpinner.adapter = sizeAdapter
+
         productAdapter = ProductAdapter(
             emptyList(),
             onDeleteClick = { product -> deleteProduct(product) },
@@ -69,13 +75,12 @@ class InventoryActivity : AppCompatActivity() {
 
         addButton.setOnClickListener {
             val name = nameInput.text.toString().trim()
-            val size = sizeInput.text.toString().trim()
             val priceText = priceInput.text.toString().trim()
             val quantityText = quantityInput.text.toString().trim()
             val thresholdText = thresholdInput.text.toString().trim()
 
             nameLayout.error = null
-            sizeLayout.error = null
+            sizeError.visibility = View.GONE
             priceLayout.error = null
             quantityLayout.error = null
             thresholdLayout.error = null
@@ -84,6 +89,13 @@ class InventoryActivity : AppCompatActivity() {
                 nameLayout.error = "Name is required"
                 return@setOnClickListener
             }
+
+            val sizePosition = sizeSpinner.selectedItemPosition
+            if (sizePosition <= 0) {
+                sizeError.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            val size = sizeOptions[sizePosition]
 
             val price = priceText.toDoubleOrNull()
             if (price == null || price <= 0.0) {
@@ -105,7 +117,7 @@ class InventoryActivity : AppCompatActivity() {
 
             val request = CreateProductRequest(
                 name = name,
-                size = size.takeIf { it.isNotBlank() },
+                size = size,
                 category = selectedCategory ?: "TEE",
                 price = price,
                 quantity = quantity,

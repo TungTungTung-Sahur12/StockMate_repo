@@ -325,6 +325,20 @@
             app:layout_constraintTop_toBottomOf="@id/overviewCard" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/recordSaleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/ascendia_black"
+            android:text="Record Sale"
+            android:textColor="@color/ascendia_white"
+            android:visibility="gone"
+            app:cornerRadius="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/inventoryButton" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/manageUsersButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -336,7 +350,7 @@
             app:cornerRadius="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/inventoryButton" />
+            app:layout_constraintTop_toBottomOf="@id/recordSaleButton" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/staffCard"

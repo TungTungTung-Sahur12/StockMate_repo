@@ -42,7 +42,8 @@ class ProductAdapter(
             placeholderText.text = item.category.replace("_", " ").uppercase()
             nameText.text = item.name
             priceText.text = "Price: ₱%.2f".format(item.price)
-            quantityText.text = "Qty: ${item.quantity}"
+            val sizeLabel = item.size?.takeIf { it.isNotBlank() }?.let { " · Size: $it" } ?: ""
+            quantityText.text = "Qty: ${item.quantity}$sizeLabel"
 
             lowStockBadge.visibility = if (InventoryUiUtils.isLowStock(item.quantity, item.lowStockThreshold)) {
                 View.VISIBLE

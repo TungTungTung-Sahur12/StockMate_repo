@@ -28,7 +28,7 @@ public class ProductService {
         Product product = Product.builder()
                 .name(request.getName())
                 .category(request.getCategory())
-                .size(request.getSize())
+                .size(request.getSize().trim().toUpperCase())
                 .price(request.getPrice())
                 .quantity(request.getQuantity())
                 .lowStockThreshold(
@@ -87,7 +87,7 @@ public class ProductService {
 
         product.setName(request.getName());
         product.setCategory(request.getCategory());
-        product.setSize(request.getSize());
+        product.setSize(request.getSize().trim().toUpperCase());
         product.setPrice(request.getPrice());
         product.setQuantity(request.getQuantity());
         if (request.getLowStockThreshold() != null) {

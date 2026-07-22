@@ -19,6 +19,8 @@ const CATEGORY_OPTIONS = [
 
 const CATEGORY_LABELS = Object.fromEntries(CATEGORY_OPTIONS.filter((c) => c.value).map((c) => [c.value, c.label]));
 
+const SIZE_OPTIONS = ["XS", "S", "M", "L", "XL", "XXL"];
+
 const emptyForm = {
   name: "",
   category: "TEE",
@@ -74,6 +76,7 @@ export default function Inventory() {
 
     if (!form.name.trim()) nextErrors.name = "Name is required";
     if (!form.category) nextErrors.category = "Category is required";
+    if (!form.size) nextErrors.size = "Size is required";
 
     if (!form.price) nextErrors.price = "Price is required";
     else {
@@ -112,7 +115,7 @@ export default function Inventory() {
     const payload = {
       name: form.name.trim(),
       category: form.category,
-      size: form.size.trim() || null,
+      size: form.size,
       price: Number(form.price),
       quantity: Number(form.quantity),
       lowStockThreshold: form.lowStockThreshold === "" ? 5 : Number(form.lowStockThreshold),
@@ -170,6 +173,7 @@ export default function Inventory() {
       await api.delete(`/products/${product.productId}`);
       setSuccessMsg("Product deleted successfully.");
       fetchProducts(category, search);
+      window.dispatchEvent(new Event("stockmate_inventory_updated"));
     } catch (err) {
       if (err.response?.status === 403) {
         setApiError("Only admins can delete products.");
@@ -228,8 +232,14 @@ export default function Inventory() {
             </div>
 
             <div className="form-group">
-              <label>Size (optional)</label>
-              <input value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} />
+              <label>Size</label>
+              <select value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })}>
+                <option value="">Select size</option>
+                {SIZE_OPTIONS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              {errors.size && <div className="field-error">{errors.size}</div>}
             </div>
 
             <div className="form-group">
@@ -309,6 +319,7 @@ export default function Inventory() {
                     )}
                   </div>
                   <p className="inventory-meta">Category: {CATEGORY_LABELS[product.category] || product.category}</p>
+                  <p className="inventory-meta">Size: {product.size || "—"}</p>
                   <p className="inventory-meta">Price: ₱{Number(product.price).toFixed(2)}</p>
                   <p className="inventory-meta">Quantity: {product.quantity}</p>
                   {product.isLowStock && <span className="badge badge-inactive">Low Stock</span>}

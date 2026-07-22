@@ -27,6 +27,7 @@
         <activity android:name=".DashboardActivity" android:exported="false" />
         <activity android:name=".ManageUsersActivity" android:exported="false" />
         <activity android:name=".InventoryActivity" android:exported="false" />
+        <activity android:name=".RecordSaleActivity" android:exported="false" />
     </application>
 
 </manifest>

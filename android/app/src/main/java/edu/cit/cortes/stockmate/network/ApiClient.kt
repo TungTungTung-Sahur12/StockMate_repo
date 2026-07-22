@@ -5,6 +5,7 @@ import edu.cit.cortes.stockmate.SessionManager
 import edu.cit.cortes.stockmate.api.AdminApiService
 import edu.cit.cortes.stockmate.api.AuthApiService
 import edu.cit.cortes.stockmate.api.ProductApiService
+import edu.cit.cortes.stockmate.api.SaleApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -44,4 +45,6 @@ object ApiClient {
     fun getAdminApiService(context: Context): AdminApiService = getRetrofit(context).create(AdminApiService::class.java)
 
     fun getProductApiService(context: Context): ProductApiService = getRetrofit(context).create(ProductApiService::class.java)
+
+    fun getSaleApiService(context: Context): SaleApiService = getRetrofit(context).create(SaleApiService::class.java)
 }

@@ -25,6 +25,7 @@ class DashboardActivity : AppCompatActivity() {
         val staffCard = findViewById<MaterialCardView>(R.id.staffCard)
         val manageButton = findViewById<MaterialButton>(R.id.manageUsersButton)
         val inventoryButton = findViewById<MaterialButton>(R.id.inventoryButton)
+        val recordSaleButton = findViewById<MaterialButton>(R.id.recordSaleButton)
 
         productRecyclerView.layoutManager = GridLayoutManager(this, 2)
         productRecyclerView.adapter = ProductAdapter(emptyList(), onDeleteClick = {}, showDelete = false)
@@ -48,6 +49,12 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, InventoryActivity::class.java))
         }
 
+        // Both Admin and Staff can record sales (BR-003).
+        recordSaleButton.visibility = View.VISIBLE
+        recordSaleButton.setOnClickListener {
+            startActivity(Intent(this, RecordSaleActivity::class.java))
+        }
+
         if (role.equals("ADMIN", ignoreCase = true)) {
             staffSectionTitle.text = "ASCENDIA Team Accounts"
             staffSectionDescription.text = "Add staff accounts and manage who can access ASCENDIA."
@@ -58,7 +65,7 @@ class DashboardActivity : AppCompatActivity() {
             staffCard.visibility = MaterialCardView.GONE
         } else {
             staffSectionTitle.text = "Staff Access"
-            staffSectionDescription.text = "You're logged in as Staff. Inventory and sales tools will appear here once enabled by your Admin."
+            staffSectionDescription.text = "You're logged in as Staff. Use the buttons above to browse inventory and record sales."
             manageButton.visibility = View.GONE
             staffCard.visibility = MaterialCardView.VISIBLE
         }
